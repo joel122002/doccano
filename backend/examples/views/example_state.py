@@ -6,6 +6,7 @@ from examples.models import Example, ExampleState
 from examples.serializers import ExampleStateSerializer
 from projects.models import Project
 from projects.permissions import IsProjectMember
+from projects.permissions import IsAnnotationApprover
 
 
 class ExampleStateList(generics.ListCreateAPIView):
@@ -26,7 +27,16 @@ class ExampleStateList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         queryset = self.get_queryset()
         if queryset.exists():
+            example = get_object_or_404(Example, pk=self.kwargs["example_id"])
+            if IsAnnotationApprover:
+                example.annotations_approved_by = None
+                example.save()
+                return
             queryset.delete()
         else:
             example = get_object_or_404(Example, pk=self.kwargs["example_id"])
+            if IsAnnotationApprover:
+                example.annotations_approved_by = self.request.user
+                example.save()
+                return
             serializer.save(example=example, confirmed_by=self.request.user)
