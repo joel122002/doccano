@@ -8,6 +8,8 @@ from projects.models import Project
 from projects.permissions import IsProjectMember
 from projects.permissions import IsAnnotationApprover
 
+from projects.models import Member
+
 
 class ExampleStateList(generics.ListCreateAPIView):
     serializer_class = ExampleStateSerializer
@@ -28,14 +30,14 @@ class ExampleStateList(generics.ListCreateAPIView):
         queryset = self.get_queryset()
         if queryset.exists():
             example = get_object_or_404(Example, pk=self.kwargs["example_id"])
-            if IsAnnotationApprover:
+            if Member.objects.has_role(self.kwargs["project_id"], self.request.user, "annotation_approver"):
                 example.annotations_approved_by = None
                 example.save()
                 return
             queryset.delete()
         else:
             example = get_object_or_404(Example, pk=self.kwargs["example_id"])
-            if IsAnnotationApprover:
+            if Member.objects.has_role(self.kwargs["project_id"], self.request.user, "annotation_approver"):
                 example.annotations_approved_by = self.request.user
                 example.save()
                 return
