@@ -12,7 +12,7 @@ DATA = "data"
 class ExportedExampleManager(models.Manager):
     def confirmed(self, project: Project, user=None):
         if project.collaborative_annotation:
-            return self.filter(project=project).exclude(states=None)
+            return self.filter(project=project, states__example__annotations_approved_by__isnull=False) #.exclude(states=None)
         else:
             assert user is not None
             return self.filter(project=project, states__confirmed_by=user)
