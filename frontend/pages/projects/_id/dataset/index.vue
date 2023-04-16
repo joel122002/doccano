@@ -55,7 +55,7 @@
     <document-list
       v-else
       v-model="selected"
-      :items="item.items"
+      :items="filteredItems"
       :is-loading="isLoading"
       :total="item.count"
       @update:query="updateQuery"
@@ -102,7 +102,8 @@ export default Vue.extend({
       item: {} as ExampleListDTO,
       selected: [] as ExampleDTO[],
       isLoading: false,
-      isProjectAdmin: false
+      isProjectAdmin: false,
+      isApprover: false
     }
   },
 
@@ -112,11 +113,23 @@ export default Vue.extend({
     this.isLoading = false
   },
 
-  computed: {
-    canDelete(): boolean {
-      return this.selected.length > 0
-    },
-    projectId(): string {
+   computed: {
+     filteredItems(): Any {
+       // If items has not been loaded yet then return empty array.
+       if (!this.item?.items)
+         return [];
+
+       if (this.isApprover)
+         return this.item.items.filter(i => i.isConfirmed === true);
+       else if (this.isAdmin)
+         return this.item.items;
+       else // return only un-approved items for junior analyst.
+         return this.item.items.filter(i => i.annotationApprover === null);
+     },
+     canDelete(): boolean {
+       return this.selected.length > 0
+     },
+     projectId(): string {
       return this.$route.params.id
     },
     isImageTask(): boolean {
@@ -146,10 +159,11 @@ export default Vue.extend({
     this.project = await this.$services.project.findById(this.projectId)
     const member = await this.$repositories.member.fetchMyRole(this.projectId)
     this.isProjectAdmin = member.isProjectAdmin
+    this.isApprover = member.rolename === "annotation_approver";
   },
 
-  methods: {
-    async remove() {
+   methods: {
+     async remove() {
       await this.$services.example.bulkDelete(this.projectId, this.selected)
       this.$fetch()
       this.dialogDelete = false
