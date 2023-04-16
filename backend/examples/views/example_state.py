@@ -28,17 +28,22 @@ class ExampleStateList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         queryset = self.get_queryset()
+        example = get_object_or_404(Example, pk=self.kwargs["example_id"])
         if queryset.exists():
-            example = get_object_or_404(Example, pk=self.kwargs["example_id"])
             if Member.objects.has_role(self.kwargs["project_id"], self.request.user, "annotation_approver"):
-                example.annotations_approved_by = None
+                if example.annotations_approved_by is None:
+                    example.annotations_approved_by = self.request.user
+                else :
+                    example.annotations_approved_by = None
                 example.save()
                 return
             queryset.delete()
         else:
-            example = get_object_or_404(Example, pk=self.kwargs["example_id"])
             if Member.objects.has_role(self.kwargs["project_id"], self.request.user, "annotation_approver"):
-                example.annotations_approved_by = self.request.user
+                if example.annotations_approved_by is None:
+                    example.annotations_approved_by = self.request.user
+                else:
+                    example.annotations_approved_by = None
                 example.save()
                 return
             serializer.save(example=example, confirmed_by=self.request.user)
