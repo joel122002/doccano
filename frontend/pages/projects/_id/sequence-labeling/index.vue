@@ -39,6 +39,20 @@
       </v-card>
     </template>
     <template #sidebar>
+      <v-card class="mt-4">
+        <v-card-title>
+          Users
+          <v-spacer />
+        </v-card-title>
+        <v-card-text>
+          <ul>
+            <li v-for="u in annotationUsers" :key="u">
+              {{ u }} <span v-if="u == getUserId">(You)</span>
+            </li>
+          </ul>
+        </v-card-text>
+      </v-card>
+      <br>
       <annotation-progress :progress="progress" />
       <v-card class="mt-4">
         <v-card-title>
@@ -150,6 +164,9 @@ export default {
     ...mapGetters('auth', ['isAuthenticated', 'getUsername', 'getUserId']),
     ...mapGetters('config', ['isRTL']),
 
+      annotationUsers() {
+          return [...new Set(this.annotations.map(a => a.user))];
+    },
     shortKeys() {
       return Object.fromEntries(this.spanTypes.map((item) => [item.id, [item.suffixKey]]))
     },
