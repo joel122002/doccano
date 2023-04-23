@@ -31,7 +31,9 @@
     </template>
     <template #[`item.isConfirmed`]="{ item }">
       <v-chip :color="item.isConfirmed ? 'success' : 'warning'" text small>
-        {{ item.isConfirmed ? 'Finished' : 'In progress' }}
+        {{ item.annotationApprover !== null
+        ? 'Approved'
+        : (item.isConfirmed ? 'Finished' : 'In progress') }}
       </v-chip>
     </template>
     <template #[`item.text`]="{ item }">
@@ -91,8 +93,8 @@ export default Vue.extend({
     }
   },
 
-  computed: {
-    headers() {
+ computed: {
+   headers() {
       return [
         {
           text: 'ID',
