@@ -7,8 +7,13 @@ from django_drf_filepond.models import DrfFilePondStoredStorage
 from .managers import ExampleManager, ExampleStateManager
 from projects.models import Project
 
+from django.utils.translation import gettext_lazy as _
 
 class Example(models.Model):
+    class Status(models.TextChoices):
+        NOT_STARTED = 'not_started', _('Not Started')
+        IN_PROGRESS = 'in_progress', _('In Progress')
+        FINISHED = 'finished', _('Finished')
     objects = ExampleManager()
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True, unique=True)
@@ -21,6 +26,7 @@ class Example(models.Model):
     score = models.FloatField(default=100)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=11, choices=Status.choices, default=Status.NOT_STARTED)
 
     @property
     def comment_count(self):
