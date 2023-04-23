@@ -114,14 +114,14 @@ export default Vue.extend({
   },
 
    computed: {
-     filteredItems(): Any {
+     filteredItems() {
        // If items has not been loaded yet then return empty array.
        if (!this.item?.items)
          return [];
 
        if (this.isApprover)
          return this.item.items.filter(i => i.isConfirmed === true);
-       else if (this.isAdmin)
+       else if (this.isProjectAdmin)
          return this.item.items;
        else // return only un-approved items for junior analyst.
          return this.item.items.filter(i => i.annotationApprover === null);
