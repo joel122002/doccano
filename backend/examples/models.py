@@ -14,6 +14,7 @@ class Example(models.Model):
         NOT_STARTED = 'not_started', _('Not Started')
         IN_PROGRESS = 'in_progress', _('In Progress')
         FINISHED = 'finished', _('Finished')
+
     objects = ExampleManager()
 
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True, unique=True)
