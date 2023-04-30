@@ -14,6 +14,7 @@ class Example(models.Model):
         NOT_STARTED = 'not_started', _('Not Started')
         IN_PROGRESS = 'in_progress', _('In Progress')
         FINISHED = 'finished', _('Finished')
+        APPROVED = 'approved', _('Approved')
 
     objects = ExampleManager()
 
