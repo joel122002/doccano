@@ -11,6 +11,7 @@ export class ExampleDTO {
   filename: string
   url: string
   isConfirmed: boolean
+  status: string
 
   constructor(item: ExampleItem) {
     this.id = item.id
@@ -23,6 +24,7 @@ export class ExampleDTO {
     this.filename = item.filename
     this.url = item.url
     this.isConfirmed = item.isConfirmed
+    this.status = item.status
   }
 }
 

@@ -31,9 +31,7 @@
     </template>
     <template #[`item.isConfirmed`]="{ item }">
       <v-chip :color="item.isConfirmed ? 'success' : 'warning'" text small>
-        {{ item.annotationApprover !== null
-        ? 'Approved'
-        : (item.isConfirmed ? 'Finished' : 'In progress') }}
+        {{ item.status }}
       </v-chip>
     </template>
     <template #[`item.text`]="{ item }">
