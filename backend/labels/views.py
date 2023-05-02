@@ -98,16 +98,23 @@ class SpanListAPI(BaseListAPI):
     label_class = Span
     serializer_class = SpanSerializer
 
+    def create(self, request, *args, **kwargs):
+        example = get_object_or_404(Example, pk=kwargs["example_id"])
+        example.status = example.Status.IN_PROGRESS
+        example.save()
+        return super().create(request, *args, **kwargs)
+        # return super(SpanDetailAPI, self).partial_update(request, *args, **kwargs)
+
 
 class SpanDetailAPI(BaseDetailAPI):
     queryset = Span.objects.all()
     serializer_class = SpanSerializer
 
-    def partial_update(self, request, *args, **kwargs):
+    def destroy(self, request, *args, **kwargs):
         example = get_object_or_404(Example, pk=kwargs["example_id"])
         example.status = example.Status.IN_PROGRESS
         example.save()
-        return super(SpanDetailAPI, self).partial_update(request, *args, **kwargs)
+        return super(SpanDetailAPI, self).destroy(request, *args, **kwargs)
 
 class TextLabelListAPI(BaseListAPI):
     label_class = TextLabel
